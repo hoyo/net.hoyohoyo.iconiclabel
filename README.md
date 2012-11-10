@@ -1,12 +1,12 @@
 IconicLabel
 ====
 
-Iconic label widget implements k0sukey/TiIconicFont library for [Titanium](http://www.appcelerator.com/platform) [Alloy](http://projects.appcelerator.com/alloy/docs/Alloy-bootstrap/index.html).
+Iconic label widget implements [k0sukey/TiIconicFont](https://github.com/k0sukey/TiIconicFont) library for [Titanium](http://www.appcelerator.com/platform) [Alloy](http://projects.appcelerator.com/alloy/docs/Alloy-bootstrap/index.html).
 
 How to Use
 ----
 * Download and deploy the widget under `app/widgets/net.hoyohoyo.iconiclabel`.
-* Download @k0sukey's js files to `app/widgets/net.hoyohoyo.iconiclabel/lib/`.
+* Download .js libraries from [TiIconicFont](https://github.com/k0sukey/TiIconicFont) to `app/widgets/net.hoyohoyo.iconiclabel/lib/`.
 * Download font (.ttf) files to `app/widgets/net.hoyohoyo.iconiclabel/assets/font/`.
 * Add the widget as a dependency to your `app/config.json` file like so:
 
@@ -25,7 +25,7 @@ How to Use
 
 * Set style in a tss file like so: (You can use just like Ti.UI.Label.)
 
-```css
+```javascript
 '#symbol': {
 	top: 100,
 	left: 100,
