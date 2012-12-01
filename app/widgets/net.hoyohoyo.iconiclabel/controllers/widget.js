@@ -1,26 +1,44 @@
-var _args = arguments[0] || {};
-
-// require TiIconicFont
-var _if = require(WPATH('IconicFont'));
-var _font = {
-  FontAwesome: _if.IconicFont({font: WPATH('FontAwesome')}),
-  LigatureSymbols: _if.IconicFont({font: WPATH('LigatureSymbols')})
+// import IconicFont libraries
+var _fonts = {
+  FontAwesome: require(WPATH('IconicFont')).IconicFont({
+    font: WPATH('FontAwesome'),
+    ligature: false
+  }),
+  LigatureSymbols: require(WPATH('IconicFont')).IconicFont({
+    font: WPATH('LigatureSymbols'),
+    ligature: false
+  }),
+  SSPika: require(WPATH('IconicFont')).IconicFont({
+    font: WPATH('ti.ss-pika'),
+    ligature: true
+  })
 };
 
-// set font family (default: FontAwesome)
-var _family = _font.FontAwesome.fontfamily();
-if (!_.has(_args, 'font')) {
-  $.icon.setFont({fontFamily: _family});
-} else {
-  if (_.has(_args.font, 'fontFamily')) {
-    if (!_.has(_font, _args.font.fontFamily)) {
-      Ti.API.info('[IconicLabel] use one of ' + _.keys(_font).join(', '));
-    } else {
-      _family = _font[_args.font.fontFamily].fontfamily();
-    }
+// store of arguments
+var _args = arguments[0] || {};
+
+/**
+ * using font family (default: FontAwesome)
+ * @type {string}
+ */
+var _currentFont = 'FontAwesome';
+
+/**
+ * using icon
+ * @type {string|Array.<string>}
+ */
+var _currentIcon = null;
+
+// set font
+if (_.has(_args, 'font') && _.has(_args.font, 'fontFamily')) {
+  if (!_.has(_fonts, _args.font.fontFamily)) {
+    Ti.API.info('[IconicLabel] use one of ' + _.keys(_fonts).join(', '));
+  } else {
+    _currentFont = _args.font.fontFamily;
   }
-  $.icon.setFont(_.extend(_args.font, {fontFamily: _family}));
 }
+var params = {fontFamily: _fonts[_currentFont].fontfamily()};
+$.icon.setFont(_.defaults(params, _args.font || {}));
 
 // set properties to Ti.UI.Label
 _.each(_args, function(value, key) {
@@ -44,19 +62,37 @@ _.each(_args, function(value, key) {
 });
 
 /**
- * override for alert.
+ * change font.
  * @param {Object} font font.
+ * @this {net.hoyohoyo.IconicLabel}
  */
 exports.setFont = function(font) {
-  Ti.API.info('[IconicLabel] not support changing font after deploy.');
+  if (!_.has(_fonts, font)) {
+    Ti.API.info('[IconicLabel] use one of ' + _.keys(_fonts).join(', '));
+    return;
+  }
+  _currentFont = font;
+  $.icon.setFont({fontFamily: _fonts[font].fontfamily}, $.icon.font);
+  if (_currentIcon !== null) {
+    this.setIcon(_currentIcon);
+  }
+  //Ti.API.info('[IconicLabel] not support changing font after deploy.');
 };
 
 /**
  * change icon.
- * @param {string} name name of icon.
+ * @param {string|Array.<string>} arg name of icon or array of them.
  */
-exports.setIcon = function(name) {
-  $.icon.setText(_font[_family].icon(name));
+exports.setIcon = function(arg) {
+  _currentIcon = arg;
+  if (_.isArray(arg)) {
+    var ary = _.map(arg, function(value) {
+      return _fonts[_currentFont].icon(value);
+    });
+    $.icon.setText(ary.join(''));
+  } else {
+    $.icon.setText(_fonts[_currentFont].icon(arg));
+  }
 };
 
 /**
@@ -68,7 +104,6 @@ exports.setText = function(text) {
 };
 
 // be delegated functions from Ti.UI.Label
-exports = _.extend($.icon, exports);
 var funcs = [
   'add',
   'addEventListener',

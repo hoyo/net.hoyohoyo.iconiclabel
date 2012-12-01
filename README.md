@@ -7,13 +7,13 @@ How to Use
 ----
 * Download and deploy the widget under `app/widgets/net.hoyohoyo.iconiclabel`.
 * Download .js libraries from [TiIconicFont](https://github.com/k0sukey/TiIconicFont) to `app/widgets/net.hoyohoyo.iconiclabel/lib/`.
-* Download font (.ttf) files to `app/widgets/net.hoyohoyo.iconiclabel/assets/font/`.
+* Download font (.ttf) files to under `app/assets/fonts/`.
 * Add the widget as a dependency to your `app/config.json` file like so:
 
 ```javascript
 	…
 	"dependencies": {
-		"net.hoyohoyo.iconiclabel": "1.0"
+		"net.hoyohoyo.iconiclabel": "1.1"
 	}
 ```
 
@@ -27,12 +27,40 @@ How to Use
 
 ```javascript
 '#symbol': {
-	top: 100,
-	left: 100,
-	font: {fontFamily: 'FontAwesome', fontSize: 22},
+	top: '100dp',
+	left: '10dp',
+	right: '10dp',
+	font: {fontFamily: 'FontAwesome', fontSize: '22dp'},
 	icon: 'play'
 }
 ```
+
+Advanced Usage
+----
+* Using multiple icons.
+
+```javascript
+'#symbol': {
+	top: '100dp',
+	left: '10dp',
+	right: '10dp',
+	font: {fontFamily: 'FontAwesome', fontSize: '22dp'},
+	icon: ['fastBackward', 'play', 'fastForward']
+}
+```
+
+Environment
+----
+
+### OS
+- iOS
+- Android
+
+### Fonts
+- Font Awesome
+- Ligature Symbols
+- SS Pika
+
 
 Credits
 ----
