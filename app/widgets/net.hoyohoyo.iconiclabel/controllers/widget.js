@@ -62,21 +62,40 @@ _.each(_args, function(value, key) {
 });
 
 /**
+ * return font name.
+ * @return {Object} font name and style.
+ */
+exports.getFont = function() {
+  var obj = $.icon.getFont();
+  obj.fontFamily = _currentFont;
+  return obj;
+};
+
+/**
  * change font.
- * @param {Object} font font.
- * @this {net.hoyohoyo.IconicLabel}
+ * @param {Object} font name (default: FontAwesome) and style.
  */
 exports.setFont = function(font) {
-  if (!_.has(_fonts, font)) {
-    Ti.API.info('[IconicLabel] use one of ' + _.keys(_fonts).join(', '));
+  if (!_.has(font, 'fontFamily')) {
+    font.fontFamily = 'FontAwesome';
+  } else if (!_.has(_fonts, font.fontFamily)) {
+    Ti.API.info('[IconicLabel] use any one of ' + _.keys(_fonts).join(', '));
     return;
   }
-  _currentFont = font;
-  $.icon.setFont({fontFamily: _fonts[font].fontfamily}, $.icon.font);
+  _currentFont = font.fontFamily;
+  var params = {fontFamily: _fonts[_currentFont].fontfamily()};
+  $.icon.setFont(_.defaults(params, font));
   if (_currentIcon !== null) {
-    this.setIcon(_currentIcon);
+    exports.setIcon(_currentIcon);
   }
-  //Ti.API.info('[IconicLabel] not support changing font after deploy.');
+};
+
+/**
+ * return icon name.
+ * @return {string|Array.<string>} icon name or their array.
+ */
+exports.getIcon = function() {
+  return _currentIcon;
 };
 
 /**
@@ -97,18 +116,80 @@ exports.setIcon = function(arg) {
 
 /**
  * override for alert.
+ * @return {string} blank string.
+ */
+exports.getText = function() {
+  Ti.API.info('[IconicLabel] use "icon" instead of "text".');
+  return '';
+};
+
+/**
+ * override for alert.
  * @param {string} text text.
  */
 exports.setText = function(text) {
   Ti.API.info('[IconicLabel] use "icon" instead of "text".');
 };
 
+/**
+ * applies properties to Ti.UI.Label object.
+ * @param {Object} params hash of properties to apply.
+ */
+exports.applyProperties = function(params) {
+  var obj = {};
+  _.each(params, function(value, key) {
+    switch (key) {
+      case 'font':
+        exports.setFont(value);
+        break;
+      case 'icon':
+        exports.setIcon(value);
+        break;
+      case 'text':
+        Ti.API.info('[IconicLabel] use "icon" instead of "text".');
+        break;
+      default:
+        obj[key] = value;
+        break;
+    }
+  });
+  try {
+    $.icon.applyProperties(obj);
+  } catch (e) {
+    $.icon.updateLayout(obj);
+  }
+};
+
+/**
+ * applies properties to Ti.UI.Label object.
+ * @param {Object} params hash of properties to apply.
+ * @deprecated use applyProperties().
+ */
+exports.updateLayout = function(params) {
+  exports.applyProperties(params);
+};
+
 // be delegated functions from Ti.UI.Label
+_.each($.icon, function(value, key) {
+  switch (key) {
+    case 'font':
+    case 'getFont':
+    case 'setFont':
+    case 'text':
+    case 'getText':
+    case 'setText':
+    case 'applyProperties':
+    case 'updateLayout':
+      break;
+    default:
+      exports[key] = $.icon[key];
+      break;
+  }
+});
 var funcs = [
   'add',
   'addEventListener',
   'animate',
-  'applyProperties',
   'convertPointToView',
   'fireEvent',
   'getAccessibilityHidden',
@@ -144,7 +225,6 @@ var funcs = [
   'getColor',
   'getEllipsize',
   'getFocusable',
-  'getFont',
   'getHeight',
   'getHighlightedColor',
   'getHorizontalWrap',
@@ -160,7 +240,6 @@ var funcs = [
   'getShadowOffset',
   'getSize',
   'getSoftKeyboardOnFocus',
-  'getText',
   'getTextAlign',
   'getTextid',
   'getTop',
@@ -232,5 +311,7 @@ var funcs = [
   'toImage'
 ];
 _.each(funcs, function(func) {
-  exports[func] = $.icon[func];
+  if (!_.has(exports, func)) {
+    exports[func] = $.icon[func];
+  }
 });

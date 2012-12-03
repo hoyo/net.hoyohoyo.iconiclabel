@@ -35,19 +35,51 @@ How to Use
 }
 ```
 
-Advanced Usage
+Advanced Usage Example
 ----
 * Using multiple icons.
 
 ```javascript
 '#symbol': {
-	top: '100dp',
-	left: '10dp',
-	right: '10dp',
-	font: {fontFamily: 'FontAwesome', fontSize: '22dp'},
 	icon: ['fastBackward', 'play', 'fastForward']
 }
 ```
+
+* Binding a callback function to change icons.
+
+```javascript
+$.symbol.on('click', function(e) {
+	if ($.symbol.getIcon() === 'play') {
+		$.symbol.setIcon('pause');
+	} else {
+		$.symbol.setIcon('play');
+	}
+});
+```
+
+* Confirm current icon name
+
+```javascript
+Ti.API.info($.symbol.getIcon());
+```
+
+* Changing a font after deployment
+
+```javascript
+setTimeout(function() {
+	$.symbol.setFont({fontFamily: 'LigatureSymbols', fontSize: '24dp'});
+}, 10000);
+```
+
+* Changing a number of properties at once
+
+```javascript
+$.symbol.applyProperties({
+	font: {fontFamily: 'LigatureSymbols', fontSize: '24dp'},
+	icon: 'smile'
+});
+```
+
 
 Environment
 ----
