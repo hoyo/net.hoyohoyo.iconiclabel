@@ -13,7 +13,7 @@ How to Use
 ```javascript
 	…
 	"dependencies": {
-		"net.hoyohoyo.iconiclabel": "1.1"
+		"net.hoyohoyo.iconiclabel": "1.3"
 	}
 ```
 

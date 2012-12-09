@@ -29,37 +29,42 @@ var _currentFont = 'FontAwesome';
  */
 var _currentIcon = null;
 
-// set font
-if (_.has(_args, 'font') && _.has(_args.font, 'fontFamily')) {
-  if (!_.has(_fonts, _args.font.fontFamily)) {
-    Ti.API.info('[IconicLabel] use one of ' + _.keys(_fonts).join(', '));
-  } else {
-    _currentFont = _args.font.fontFamily;
+/**
+ * initalize a widget
+ */
+var _init = function() {
+  // set font
+  if (_.has(_args, 'font') && _.has(_args.font, 'fontFamily')) {
+    if (!_.has(_fonts, _args.font.fontFamily)) {
+      Ti.API.info('[IconicLabel] use one of ' + _.keys(_fonts).join(', '));
+    } else {
+      _currentFont = _args.font.fontFamily;
+    }
   }
-}
-var params = {fontFamily: _fonts[_currentFont].fontfamily()};
-$.icon.setFont(_.defaults(params, _args.font || {}));
+  var params = {fontFamily: _fonts[_currentFont].fontfamily()};
+  $.icon.setFont(_.defaults(params, _args.font || {}));
 
-// set properties to Ti.UI.Label
-_.each(_args, function(value, key) {
-  switch (key) {
-    case 'font':
-      break;
-    case 'icon':
-      exports.setIcon(value);
-      break;
-    case 'text':
-      exports.setText(value);
-      break;
-    default:
-      if (_.has($.icon, key)) {
-        $.icon[key] = value;
-      } else {
-        Ti.API.info('[IconcFont] wrong parameter. (' + key + ')');
-      }
-      break;
-  }
-});
+  // set properties to Ti.UI.Label
+  _.each(_args, function(value, key) {
+    switch (key) {
+      case 'font':
+        break;
+      case 'icon':
+        exports.setIcon(value);
+        break;
+      case 'text':
+        exports.setText(value);
+        break;
+      default:
+        if (_.has($.icon, key)) {
+          $.icon[key] = value;
+        } else {
+          Ti.API.info('[IconcFont] wrong parameter. (' + key + ')');
+        }
+        break;
+    }
+  });
+};
 
 /**
  * return font name.
@@ -315,3 +320,6 @@ _.each(funcs, function(func) {
     exports[func] = $.icon[func];
   }
 });
+
+// initialize
+_init();
